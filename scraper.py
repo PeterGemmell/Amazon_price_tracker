@@ -21,8 +21,12 @@ soup = BeautifulSoup(page.content, 'html5lib')
 # Created a variable called title and using BeautifulSoup, returns the product title as it is called.
 # For price we are converting from text to numbers, then targeting specifically the first 6 numbers.
 title = soup.find(id="productTitle").get_text()
-price = soup.find(id="priceblock_ourprice").get_text()
-converted_price = price[0:6]
+price = soup.find(id="priceblock_ourprice").text.replace(",","")
+# NOTE TO RETURN TOO
+converted_price = float(price[1:5])
+
+if(converted_price < 1449.0):
+    send_mail()
 
 print(converted_price)
 print(title.strip())
