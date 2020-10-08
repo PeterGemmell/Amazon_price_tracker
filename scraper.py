@@ -4,12 +4,24 @@ from bs4 import BeautifulSoup
 # BeautifulSoup allows us to parse that website data.
 import smtplib
 import time
+from email.mime.multipart import MIMEMultipart # MIME message type combines HTML and plain text.
+from email.mime.text import MIMEText
+from email.mime.image import MIMEImage
+
+
+Uname = '' # Enter Username here.
+Pword = '' # Enter password here.
+Faddr = Uname + '' # Enter the from email address.
+Taddr = '' # Enter the to email address.
+
+
+
+
 
 url = 'https://www.amazon.co.uk/Canon-1-2L-USM-Lens-Black/dp/B000I2J2S6/ref=sr_1_5?crid=2MWU8TLJB6W7V&dchild=1&keywords=canon+1.4+50mm&qid=1601990115&sprefix=canon+1.4%2Caps%2C147&sr=8-5'
 
 # Giving some information about our browser.
-headers = {
-    "User-Agent": 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/85.0.4183.83 Safari/537.36'}
+headers = {} # Here we would enter our User Agent, found by googling User Agent.
 
 
 def check_price():
@@ -39,12 +51,12 @@ def check_price():
         send_mail()
 
 
-def send_mail():
-    server = smtplib.SMTP('smtp.gmail.com', 587)
+def send_mail(username, password, fromaddr, toaddr, msg):
+    server = smtplib.SMTP('smtp.gmail.com:587')
     server.ehlo()
     server.starttls()
     server.ehlo()
-    server.login(username,password) ############
+    server.login('','') # Enter Username and Password
 
     subject = 'Lens price dropped!!'
     body = 'Check the Amazon link https://www.amazon.co.uk/Canon-1-2L-USM-Lens-Black/dp/B000I2J2S6/ref=sr_1_5?crid=2MWU8TLJB6W7V&dchild=1&keywords=canon+1.4+50mm&qid=1601990115&sprefix=canon+1.4%2Caps%2C147&sr=8-'
@@ -52,13 +64,44 @@ def send_mail():
     msg = f"Subject: {subject}\n\n{body}"
 
     server.sendmail(
-        'From',
-        'To',
+        '', # Enter from email address.
+        '', # Enter to email address.
         msg
     )
-    print('HEY EMAIL HAS BEEN SENT')
+    print('HEY THE EMAIL HAS BEEN SENT')
 
     server.quit()
+
+
+def email_stock_info(username, password, fromaddr, toaddr):
+    email_msg = ''
+    html_msg  = """\
+	<html>
+		<head>The lens price has droppped!!:</head>
+		<body>
+			<p>Check the Amazon link https://www.amazon.co.uk/Canon-1-2L-USM-Lens-Black/dp/B000I2J2S6/ref=sr_1_5?crid=2MWU8TLJB6W7V&dchild=1&keywords=canon+1.4+50mm&qid=1601990115&sprefix=canon+1.4%2Caps%2C147&sr=8-</p>
+        </body>
+    </html>
+	"""
+
+    mime_msg = MIMEMultipart('alternative')
+    mime_msg.attach(MIMEText(email_msg, 'plain'))
+    mime_msg.attach(MIMEText(html_msg, 'html'))
+
+
+    body = ''
+
+    mime_msg['Subject'] = 'Canon 50mm 1.2f lens'
+    mime_msg['From'] = fromaddr
+    mime_msg['To'] = toaddr
+
+
+    send_mail(username, password, fromaddr, toaddr, mime_msg)
+
+
+
+if __name__ == '__main__':
+    email_stock_info(Uname, Pword, Faddr, Taddr)
 
 check_price()
 
