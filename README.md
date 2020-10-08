@@ -12,7 +12,7 @@
 
 * You will need to add in email details of choice
 
-* To simulate a price drop you can change less than < to greater than
+* To simulate a price movement you can change less than < to greater than >
 
 * Type the command python3 scraper.py
 
